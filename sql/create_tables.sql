@@ -56,8 +56,14 @@ CREATE TABLE User_Tagged_Movie (
 
 CREATE TABLE Movie_Genre(
 	movieID INT NOT NULL,
-    Genre VARCHAR(32),
+    Genre VARCHAR(32) NOT NULL,
     PRIMARY KEY(movieID, Genre)
+);
+
+CREATE TABLE Movie_Location(
+	movieID INT NOT NULL,
+    location VARCHAR(64) NOT NULL,
+    PRIMARY KEY(movieID, location)
 );
 
 ALTER TABLE Movie
@@ -79,4 +85,7 @@ ALTER TABLE User_Tagged_Movie
     ADD FOREIGN KEY(tagID) REFERENCES Tag(id);
 
 ALTER TABLE Movie_Genre
+	ADD FOREIGN KEY(movieID) REFERENCES Movie(id);
+    
+ALTER TABLE Movie_Location
 	ADD FOREIGN KEY(movieID) REFERENCES Movie(id);
