@@ -7,7 +7,7 @@ CREATE TABLE Movie (
 	rtAudienceNumRatings INT,
 	rtAudienceScore SMALLINT,
 	rtPictureURL VARCHAR(128),
-	directorID VARCHAR(32) NOT NULL,
+	directorID VARCHAR(32),
 	country VARCHAR(32),
 	PRIMARY KEY (id)
 );
