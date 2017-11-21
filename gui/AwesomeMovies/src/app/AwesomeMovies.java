@@ -1,3 +1,4 @@
+package app;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.EventQueue;
@@ -5,6 +6,10 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -12,10 +17,14 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.JScrollPane;
+import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import java.awt.Color;
+import java.awt.Component;
+
 import javax.swing.JRadioButton;
 import javax.swing.SwingConstants;
 
@@ -29,6 +38,8 @@ public class AwesomeMovies {
 	private JTextField txtGenre;
 	private JTextField txtDirector;
 	private JTextField txtActor;
+	
+	private JPanel contentPanel;
 
 	private JTextField txtTag;
 	private JTextField txtTopDirectors;
@@ -55,7 +66,8 @@ public class AwesomeMovies {
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
-		EventQueue.invokeLater(new Runnable() {
+		Database.connect();
+	    EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
 					AwesomeMovies window = new AwesomeMovies();
@@ -93,14 +105,14 @@ public class AwesomeMovies {
 
 		JLabel lblAwesomeMovies = new JLabel("");
 		lblAwesomeMovies.setHorizontalAlignment(SwingConstants.CENTER);
-		lblAwesomeMovies.setIcon(new ImageIcon("C:\\Data\\eclipse-workspace\\AwesomeMovies\\src\\AwesomeMovies.png"));
+		lblAwesomeMovies.setIcon(new ImageIcon("AwesomeMovies/src/AwesomeMovies.png"));
 		//frame.getContentPane().add(lblHelloWorld, BorderLayout.NORTH);
 
 		JLabel lblLeftCurtain = new JLabel("");
-		lblLeftCurtain.setIcon(new ImageIcon("C:\\Data\\eclipse-workspace\\AwesomeMovies\\src\\LeftCurtain.png"));
+		lblLeftCurtain.setIcon(new ImageIcon("AwesomeMovies/src/LeftCurtain.png"));
 
 		JLabel lblRightCurtain = new JLabel("");
-		lblRightCurtain.setIcon(new ImageIcon("C:\\Data\\eclipse-workspace\\AwesomeMovies\\src\\RightCurtain.png"));
+		lblRightCurtain.setIcon(new ImageIcon("AwesomeMovies/src/RightCurtain.png"));
 
 		JPanel topPanel = new JPanel();
 		topPanel.setBackground(Color.BLACK);
@@ -141,10 +153,13 @@ public class AwesomeMovies {
 		
 		//**********************
 		// Middle Text Panel
-		JScrollPane scrollPane = new JScrollPane();
+		contentPanel = new JPanel();
+        contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.PAGE_AXIS));
+		JScrollPane scrollPane = new JScrollPane(contentPanel, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		textArea = new JTextArea();
-		scrollPane.setViewportView(textArea);
+		//scrollPane.setViewportView(textArea);
 		centerPanel.add(scrollPane, BorderLayout.CENTER);
+		//centerPanel.add(contentPanel);
 		
 		//GridLayout gRLayout = new GridLayout(2, 5, 0, 0);
 		FlowLayout fl_centerBottomPanel = new FlowLayout();
@@ -408,7 +423,8 @@ public class AwesomeMovies {
 		btnClose.setPreferredSize(new Dimension(100,20));
 		btnClose.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				System.exit(0);
+			    Database.close();
+			    System.exit(0);
 			}
 		});
 
@@ -681,8 +697,44 @@ public class AwesomeMovies {
 	private String FindTopNMovies(int n)
 	{
 		String results = "";
+		List<Movie> movies = Database.getTopMovies(n);
+		showMovieList(movies);
 		
 		return results;
+	}
+	
+	private void showMovieList(List<Movie> movies){
+	    contentPanel.removeAll();
+        for(Movie m : movies){
+            JPanel row = new JPanel();
+            row.setLayout(new BoxLayout(row, BoxLayout.PAGE_AXIS));
+            
+            JPanel imageRow = new JPanel(new FlowLayout());
+            imageRow.setAlignmentX(Component.CENTER_ALIGNMENT);
+            
+            JLabel text = new JLabel(m.title + " Year: " + m.year + " Audience Score: " + m.rtAudienceScore);
+            text.setAlignmentX(Component.CENTER_ALIGNMENT);
+            ImageIcon imdb = imageFromURL(m.imdbPictureURL);
+            ImageIcon rt = imageFromURL(m.rtPictureURL);
+            imageRow.add(new JLabel(imdb));
+            imageRow.add(new JLabel(rt));
+            row.add(text);
+            row.add(imageRow);
+            contentPanel.add(row);
+        }
+        contentPanel.validate();
+        contentPanel.repaint();
+	}
+	
+	private ImageIcon imageFromURL(String url){
+	    URL img = null;
+        try {
+            img = new URL(url);
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
+        ImageIcon image = new ImageIcon(img);
+        return image;
 	}
 	
 	private String FindMovieByTitle(String title) 
