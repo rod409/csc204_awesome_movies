@@ -31,6 +31,7 @@ import java.awt.Component;
 
 import javax.swing.JRadioButton;
 import javax.swing.SwingConstants;
+import javax.swing.JComboBox;
 
 public class AwesomeMovies {
 
@@ -39,33 +40,16 @@ public class AwesomeMovies {
 	private JTextField textField;
 	private JTextField txtTop;
 	private JTextField txtTitle;
-	private JTextField txtGenre;
-	private JTextField txtDirector;
-	private JTextField txtActor;
-	
-	private JPanel contentPanel;
 
-	private JTextField txtTag;
-	private JTextField txtTopDirectors;
-	private JTextField txtTopActors;
+	private JLabel lblTitle;
+	private JPanel contentPanel;
 	private JTextField txtAppearances;
-	private JTextField txtUser;
 	private JTextField txtTimeLine;
 	
 	private ButtonGroup bgOptions;
-	private JRadioButton rdbtnTopMovies;
-	private JRadioButton rdbtnBytitle;
-	private JRadioButton rdbtnBygenre;
-	private JRadioButton rdbtnBydirector;
-	private JRadioButton rdbtnByactor;
-	private JRadioButton rdbtnBytag;
-	private JRadioButton rdbtnTopdirectors;
-	private JRadioButton rdbtnTopactors;
-	private JRadioButton rdbtnTimelineByUser;
-	private JRadioButton rdbtnShowAllTagsByUser;
-	private JRadioButton rdbtnShowTopNByDirector;
-	private JRadioButton rdbtnShowTopNByGenre;
 	private int icounter = 0;
+	private JComboBox cboQueries;
+	private JScrollPane scrollPane;
 	/**
 	 * Launch the application.
 	 */
@@ -159,238 +143,103 @@ public class AwesomeMovies {
 		// Middle Text Panel
 		contentPanel = new JPanel();
         contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.PAGE_AXIS));
-		JScrollPane scrollPane = new JScrollPane(contentPanel, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		scrollPane = new JScrollPane(contentPanel, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		scrollPane.setPreferredSize(new Dimension(scrollPane.getPreferredSize().width, scrollPane.getPreferredSize().height));
 		textArea = new JTextArea();
 		//scrollPane.setViewportView(textArea);
 		centerPanel.add(scrollPane, BorderLayout.CENTER);
 		//centerPanel.add(contentPanel);
 		
 		//GridLayout gRLayout = new GridLayout(2, 5, 0, 0);
-		FlowLayout fl_centerBottomPanel = new FlowLayout();
-
+		FlowLayout fl_searchPanelTop = new FlowLayout(FlowLayout.LEFT);
+		FlowLayout fl_searchPanelBottom = new FlowLayout();
+				
 		JPanel centerBottomPanel = new JPanel();
 		centerBottomPanel.setBackground(new Color(154, 205, 50));
-		centerBottomPanel.setPreferredSize(new Dimension(100, 180));
-		centerBottomPanel.setLayout(fl_centerBottomPanel);
-		centerPanel.add(centerBottomPanel, BorderLayout.SOUTH);
+		centerBottomPanel.setPreferredSize(new Dimension(100, 60));
+		centerBottomPanel.setLayout(new BorderLayout());		
+		//centerBottomPanel.setLayout(fl_centerBottomPanel);		
 		
-
+		JPanel searchPanelTop = new JPanel();
+		searchPanelTop.setBackground(new Color(154, 205, 50));
+		searchPanelTop.setPreferredSize(new Dimension(100, 30));
+		searchPanelTop.setLayout(fl_searchPanelTop);		
+		centerBottomPanel.add(searchPanelTop, BorderLayout.NORTH);
+		
 		JLabel lblSearch = new JLabel("  Search:    ");
-		centerBottomPanel.add(lblSearch);
-		
+		searchPanelTop.add(lblSearch);
+
+		/*
 		bgOptions = new ButtonGroup();
-		ActionListener RadioButtonListener = new ActionListener() {
+		*/
+		
+		cboQueries = new JComboBox();
+		cboQueries.setMaximumRowCount(12);
+		cboQueries.setPrototypeDisplayValue("--------          Select Search Type          --------");
+		cboQueries.addItem("1) Top Popular Movies "); 
+		cboQueries.addItem("2) Movies by Title "); 
+		cboQueries.addItem("3) Top Movies by Genre "); 
+		cboQueries.addItem("4) All Movies by Director "); 
+		cboQueries.addItem("5) All Movies by Actor "); 
+		cboQueries.addItem("6) All Movies by Tag "); 
+		cboQueries.addItem("7) Top Directors "); 
+		cboQueries.addItem("8) Top Actors "); 
+		cboQueries.addItem("9) All Movies by User "); 
+		cboQueries.addItem("10) All Tags Associated With Movie "); 
+		cboQueries.addItem("11) Recommended Top 5 Movies by Genre "); 
+		cboQueries.addItem("12) Recommended Top 5 Movies by Director "); 
+		searchPanelTop.add(cboQueries);
+
+		ActionListener ComboBoxListener = new ActionListener() {
 			@Override public void actionPerformed(ActionEvent e) {
-				RadioButtonChanged(e);
+				DropDownChanged(e);
 			}
 		};
+
+		cboQueries.addActionListener(ComboBoxListener);
 		
-		rdbtnTopMovies = new JRadioButton("");
-		rdbtnTopMovies.setSelected(true);
-		rdbtnTopMovies.setBackground(new Color(154, 205, 50));
-		centerBottomPanel.add(rdbtnTopMovies);
-		rdbtnTopMovies.addActionListener(RadioButtonListener);
-		bgOptions.add(rdbtnTopMovies);
+		centerPanel.add(centerBottomPanel, BorderLayout.SOUTH);
+
+		JPanel searchPanelBottom = new JPanel();
+		searchPanelBottom.setBackground(new Color(154, 205, 50));
+		searchPanelBottom.setPreferredSize(new Dimension(100, 30));
+		searchPanelBottom.setLayout(fl_searchPanelBottom);		
+		centerBottomPanel.add(searchPanelBottom, BorderLayout.SOUTH);
 		
 		JLabel lblTop = new JLabel(" Top");
 		centerBottomPanel.add(lblTop);
 		
 		txtTop = new JTextField();
 		txtTop.setText("10");
-		centerBottomPanel.add(txtTop);
+		searchPanelBottom.add(txtTop);
 		txtTop.setColumns(2);
 
 		JLabel lblMovies = new JLabel("Movies       ");
-		centerBottomPanel.add(lblMovies);
-		
-		rdbtnBytitle = new JRadioButton("");
-		rdbtnBytitle.setBackground(new Color(154, 205, 50));
-		centerBottomPanel.add(rdbtnBytitle);
-		rdbtnBytitle.addActionListener(RadioButtonListener);
-		bgOptions.add(rdbtnBytitle);
+		searchPanelBottom.add(lblMovies);
 
-		JLabel lblTitle = new JLabel("By Title:");
-		centerBottomPanel.add(lblTitle);
+		lblTitle = new JLabel("By Title:");
+		searchPanelBottom.add(lblTitle);
 		
 		txtTitle = new JTextField();
 		txtTitle.setEnabled(false);
-		centerBottomPanel.add(txtTitle);
+		searchPanelBottom.add(txtTitle);
 		txtTitle.setColumns(20);
 
-		JLabel lblSpacer1 = new JLabel("__");
-		lblSpacer1.setForeground(new Color(154, 205, 50));
-		centerBottomPanel.add(lblSpacer1);
-
-		rdbtnBygenre = new JRadioButton("");
-		rdbtnBygenre.setBackground(new Color(154, 205, 50));
-		centerBottomPanel.add(rdbtnBygenre);
-		rdbtnBygenre.addActionListener(RadioButtonListener);
-		bgOptions.add(rdbtnBygenre);
-		
-		JLabel lblGenre = new JLabel("By Genre:");
-		centerBottomPanel.add(lblGenre);
-
-		txtGenre = new JTextField();
-		txtGenre.setEnabled(false);
-		centerBottomPanel.add(txtGenre);
-		txtGenre.setColumns(20);
-
-		JLabel lblSpacer1c = new JLabel("__");
-		lblSpacer1c.setForeground(new Color(154, 205, 50));
-		centerBottomPanel.add(lblSpacer1c);
-
-		JLabel lblSpacer2 = new JLabel("________________________");
-		lblSpacer2.setForeground(new Color(154, 205, 50));
-		centerBottomPanel.add(lblSpacer2);
-		
-		rdbtnBydirector = new JRadioButton("");
-		rdbtnBydirector.setBackground(new Color(154, 205, 50));
-		centerBottomPanel.add(rdbtnBydirector);
-		rdbtnBydirector.addActionListener(RadioButtonListener);
-		bgOptions.add(rdbtnBydirector);
-
-		JLabel lblDirector = new JLabel("By Director:");
-		centerBottomPanel.add(lblDirector);
-		
-		txtDirector = new JTextField();
-		txtDirector.setEnabled(false);
-		centerBottomPanel.add(txtDirector);
-		txtDirector.setColumns(20);
-
-		JLabel lblSpacer2b = new JLabel("__");
-		lblSpacer2b.setForeground(new Color(154, 205, 50));
-		centerBottomPanel.add(lblSpacer2b);
-		
-		rdbtnByactor = new JRadioButton("");
-		rdbtnByactor.setBackground(new Color(154, 205, 50));
-		centerBottomPanel.add(rdbtnByactor);
-		rdbtnByactor.addActionListener(RadioButtonListener);
-		bgOptions.add(rdbtnByactor);
-
-		//rdbtnByactor.action(evt, what)
-		bgOptions.add(rdbtnByactor);
-
-		JLabel lblActor = new JLabel("By Actor:");
-		centerBottomPanel.add(lblActor);
-		
-		txtActor = new JTextField();
-		txtActor.setEnabled(false);
-		centerBottomPanel.add(txtActor);
-		txtActor.setColumns(20);
-
-		JLabel lblSpacer3 = new JLabel("_______________________________");
-		lblSpacer3.setForeground(new Color(154, 205, 50));
-		centerBottomPanel.add(lblSpacer3);
-		
-		rdbtnBytag = new JRadioButton("");
-		rdbtnBytag.setBackground(new Color(154, 205, 50));
-		centerBottomPanel.add(rdbtnBytag);
-		rdbtnBytag.addActionListener(RadioButtonListener);
-		bgOptions.add(rdbtnBytag);
-		
-		JLabel lblTag = new JLabel("By Tag: ");
-		centerBottomPanel.add(lblTag);
-		
-		txtTag = new JTextField();
-		txtTag.setEnabled(false);
-		centerBottomPanel.add(txtTag);
-		txtTag.setColumns(20);
-
-		JLabel lblSpacer3b = new JLabel("___________________________________________");
-		lblSpacer3b.setForeground(new Color(154, 205, 50));
-		centerBottomPanel.add(lblSpacer3b);
-
-		JLabel lblSpacer4 = new JLabel("________________________________");
-		lblSpacer4.setForeground(new Color(154, 205, 50));
-		centerBottomPanel.add(lblSpacer4);
-		
-		rdbtnTopdirectors = new JRadioButton("");
-		rdbtnTopdirectors.setBackground(new Color(154, 205, 50));
-		centerBottomPanel.add(rdbtnTopdirectors);
-		rdbtnTopdirectors.addActionListener(RadioButtonListener);
-		bgOptions.add(rdbtnTopdirectors);
-
-		JLabel lblTopDirectors = new JLabel("Top");
-		centerBottomPanel.add(lblTopDirectors);
-		
-		txtTopDirectors = new JTextField();
-		txtTopDirectors.setEnabled(false);
-		txtTopDirectors.setText("10");
-		centerBottomPanel.add(txtTopDirectors);
-		txtTopDirectors.setColumns(2);
-
-		JLabel lblTopDirectorsb = new JLabel("Directors                     ");
-		centerBottomPanel.add(lblTopDirectorsb);
-		
-		rdbtnTopactors = new JRadioButton("");
-		rdbtnTopactors.setBackground(new Color(154, 205, 50));
-		centerBottomPanel.add(rdbtnTopactors);
-		rdbtnTopactors.addActionListener(RadioButtonListener);
-		bgOptions.add(rdbtnTopactors);
-
-		JLabel lblTopActors = new JLabel("Top");
-		centerBottomPanel.add(lblTopActors);
-		
-		txtTopActors = new JTextField();
-		txtTopActors.setEnabled(false);
-		txtTopActors.setText("10");
-		centerBottomPanel.add(txtTopActors);
-		txtTopActors.setColumns(2);
-
-		JLabel lblTopActorsb = new JLabel("Actors ");
-		centerBottomPanel.add(lblTopActorsb);
-
 		JLabel lblAppearances2 = new JLabel(" who Appeared in at Least");
-		centerBottomPanel.add(lblAppearances2);
+		searchPanelBottom.add(lblAppearances2);
 		
 		txtAppearances = new JTextField();
 		txtAppearances.setEnabled(false);
 		txtAppearances.setText("1");
-		centerBottomPanel.add(txtAppearances);
+		searchPanelBottom.add(txtAppearances);
 		txtAppearances.setColumns(2);
 
 		JLabel lblAppearances = new JLabel("Movies.");
-		centerBottomPanel.add(lblAppearances);
-
-		JLabel lblSpacer5 = new JLabel("_____________________________________");
-		lblSpacer5.setForeground(new Color(154, 205, 50));
-		centerBottomPanel.add(lblSpacer5);
-		
-		JLabel lblUser = new JLabel("User: ");
-		centerBottomPanel.add(lblUser);
-		
-		txtUser = new JTextField();
-		txtUser.setEnabled(false);
-		centerBottomPanel.add(txtUser);
-		txtUser.setColumns(20);
+		searchPanelBottom.add(lblAppearances);
 
 		JLabel lblSpacer5b = new JLabel("__________________________________________");
 		lblSpacer5b.setForeground(new Color(154, 205, 50));
-		centerBottomPanel.add(lblSpacer5b);
-
-		rdbtnTimelineByUser = new JRadioButton("Show all timelines by user.");
-		rdbtnTimelineByUser.setBackground(new Color(154, 205, 50));
-		centerBottomPanel.add(rdbtnTimelineByUser);
-		rdbtnTimelineByUser.addActionListener(RadioButtonListener);
-		bgOptions.add(rdbtnTimelineByUser);		
-		
-		rdbtnShowAllTagsByUser = new JRadioButton("Show all tags by user.");
-		rdbtnShowAllTagsByUser.setBackground(new Color(154, 205, 50));
-		centerBottomPanel.add(rdbtnShowAllTagsByUser);
-		rdbtnShowAllTagsByUser.addActionListener(RadioButtonListener);
-		bgOptions.add(rdbtnShowAllTagsByUser);		
-
-		rdbtnShowTopNByGenre = new JRadioButton("Show Recommended Top 5 by Genre.");
-		rdbtnShowTopNByGenre.setBackground(new Color(154, 205, 50));
-		centerBottomPanel.add(rdbtnShowTopNByGenre);
-		rdbtnShowTopNByGenre.addActionListener(RadioButtonListener);
-		bgOptions.add(rdbtnShowTopNByGenre);
-
-		rdbtnShowTopNByDirector = new JRadioButton("Show Recommended Top 5 by Director.");
-		rdbtnShowTopNByDirector.setBackground(new Color(154, 205, 50));
-		centerBottomPanel.add(rdbtnShowTopNByDirector);
-		rdbtnShowTopNByDirector.addActionListener(RadioButtonListener);
-		bgOptions.add(rdbtnShowTopNByDirector);
+		searchPanelBottom.add(lblSpacer5b);
 				
 		//************************************************
 		mainPanel.add(centerPanel, BorderLayout.CENTER);
@@ -440,261 +289,185 @@ public class AwesomeMovies {
 		frame.pack();
 		//frame.getContentPane().add(panel, BorderLayout.CENTER);
 	}
-
-	public void RadioButtonChanged(ActionEvent e)
+	
+	public void DropDownChanged(ActionEvent e)
 	{
-		if(rdbtnTopMovies.isSelected())
+		if(this.cboQueries.getSelectedIndex() == 0)  //"1) Top Popular Movies "
 		{
-			txtTop.setEnabled(true);
-			txtTitle.setEnabled(false);
-			txtTopDirectors.setEnabled(false);
-			txtTopActors.setEnabled(false);
+			this.txtTop.setEnabled(true);
+			this.txtTitle.setEnabled(false);
 			txtAppearances.setEnabled(false);
-			txtGenre.setEnabled(false);
-			txtDirector.setEnabled(false);
-			txtActor.setEnabled(false);
-			txtTag.setEnabled(false);
-			txtUser.setEnabled(false);
 		}
-		else if(rdbtnBytitle.isSelected())
+		else if(this.cboQueries.getSelectedIndex() == 1)  //"2) Movies by Title "
 		{
-			txtTop.setEnabled(false);
-			txtTitle.setEnabled(true);
-			txtTopDirectors.setEnabled(false);
-			txtTopActors.setEnabled(false);
+			this.txtTop.setEnabled(false);
+			lblTitle.setText("Title:");
+			this.txtTitle.setEnabled(true);
 			txtAppearances.setEnabled(false);
-			txtGenre.setEnabled(false);
-			txtDirector.setEnabled(false);
-			txtActor.setEnabled(false);
-			txtTag.setEnabled(false);
-			txtUser.setEnabled(false);
 		}
-		else if(rdbtnBygenre.isSelected())
+		else if(this.cboQueries.getSelectedIndex() == 2)  //"3) Top Movies by Genre "
 		{
-			txtTop.setEnabled(true);
-			txtTitle.setEnabled(false);
-			txtTopDirectors.setEnabled(false);
-			txtTopActors.setEnabled(false);
+			this.txtTop.setEnabled(true);
+			lblTitle.setText("Genre:");
+			this.txtTitle.setEnabled(true);
 			txtAppearances.setEnabled(false);
-			txtGenre.setEnabled(true);
-			txtDirector.setEnabled(false);
-			txtActor.setEnabled(false);
-			txtTag.setEnabled(false);
-			txtUser.setEnabled(false);
 		}
-		else if(rdbtnBydirector.isSelected())
+		else if(this.cboQueries.getSelectedIndex() == 3) //"4) All Movies by Director "
 		{
-			txtTop.setEnabled(false);
-			txtTitle.setEnabled(false);
-			txtTopDirectors.setEnabled(false);
-			txtTopActors.setEnabled(false);
+			this.txtTop.setEnabled(false);
+			lblTitle.setText("Director:");
+			this.txtTitle.setEnabled(true);
 			txtAppearances.setEnabled(false);
-			txtGenre.setEnabled(false);
-			txtDirector.setEnabled(true);
-			txtActor.setEnabled(false);
-			txtTag.setEnabled(false);
-			txtUser.setEnabled(false);
 		}
-		else if(rdbtnByactor.isSelected())
+		else if(this.cboQueries.getSelectedIndex() == 4)  //"5) All Movies by Actor "
 		{
-			txtTop.setEnabled(false);
-			txtTitle.setEnabled(false);
-			txtTopDirectors.setEnabled(false);
-			txtTopActors.setEnabled(false);
+			this.txtTop.setEnabled(false);
+			lblTitle.setText("Actor:");
+			this.txtTitle.setEnabled(true);
 			txtAppearances.setEnabled(false);
-			txtGenre.setEnabled(false);
-			txtDirector.setEnabled(false);
-			txtActor.setEnabled(true);
-			txtTag.setEnabled(false);
-			txtUser.setEnabled(false);
 		}
-		else if(rdbtnBytag.isSelected())
+		else if(this.cboQueries.getSelectedIndex() == 5)  //"6) All Movies by Tag "
 		{
-			txtTop.setEnabled(false);
-			txtTitle.setEnabled(false);
-			txtTopDirectors.setEnabled(false);
-			txtTopActors.setEnabled(false);
+			this.txtTop.setEnabled(false);
+			lblTitle.setText("Tag:");
+			this.txtTitle.setEnabled(true);
 			txtAppearances.setEnabled(false);
-			txtGenre.setEnabled(false);
-			txtDirector.setEnabled(false);
-			txtActor.setEnabled(false);
-			txtTag.setEnabled(true);
-			txtUser.setEnabled(false);
 		}
-		else if(rdbtnTopdirectors.isSelected())
+		else if(this.cboQueries.getSelectedIndex() == 6)  //"7) Top Directors "
 		{
-			txtTop.setEnabled(false);
-			txtTitle.setEnabled(false);
-			txtTopDirectors.setEnabled(true);
-			txtTopActors.setEnabled(false);
+			this.txtTop.setEnabled(true);
+			lblTitle.setText("Director:");
+			this.txtTitle.setEnabled(false);
 			txtAppearances.setEnabled(true);
-			txtGenre.setEnabled(false);
-			txtDirector.setEnabled(false);
-			txtActor.setEnabled(false);
-			txtTag.setEnabled(false);
-			txtUser.setEnabled(false);
 		}
-		else if(rdbtnTopactors.isSelected())
+		else if(this.cboQueries.getSelectedIndex() == 7)  //"8) Top Actors "
 		{
-			txtTop.setEnabled(false);
-			txtTitle.setEnabled(false);
-			txtTopDirectors.setEnabled(false);
-			txtTopActors.setEnabled(true);
+			this.txtTop.setEnabled(true);
+			lblTitle.setText("Actor:");
+			this.txtTitle.setEnabled(false);
 			txtAppearances.setEnabled(true);
-			txtGenre.setEnabled(false);
-			txtDirector.setEnabled(false);
-			txtActor.setEnabled(false);
-			txtTag.setEnabled(false);
-			txtUser.setEnabled(false);
 		}
-				
-		else if(rdbtnTimelineByUser.isSelected())
+		else if(this.cboQueries.getSelectedIndex() == 8)  //"9) All Movies by User "
 		{
-			txtTop.setEnabled(false);
-			txtTitle.setEnabled(false);
-			txtTopDirectors.setEnabled(false);
-			txtTopActors.setEnabled(false);
+			this.txtTop.setEnabled(false);
+			lblTitle.setText("User:");
+			this.txtTitle.setEnabled(true);
 			txtAppearances.setEnabled(false);
-			txtGenre.setEnabled(false);
-			txtDirector.setEnabled(false);
-			txtActor.setEnabled(false);
-			txtTag.setEnabled(false);
-			txtUser.setEnabled(true);
 		}
-		else if(rdbtnShowAllTagsByUser.isSelected())
+		else if(this.cboQueries.getSelectedIndex() == 9)  //"10) All Tags Associated With Movie "
 		{
-			txtTop.setEnabled(false);
-			txtTitle.setEnabled(false);
-			txtTopDirectors.setEnabled(false);
-			txtTopActors.setEnabled(false);
+			this.txtTop.setEnabled(false);
+			lblTitle.setText("Title:");
+			this.txtTitle.setEnabled(true);
 			txtAppearances.setEnabled(false);
-			txtGenre.setEnabled(false);
-			txtDirector.setEnabled(false);
-			txtActor.setEnabled(false);
-			txtTag.setEnabled(false);
-			txtUser.setEnabled(true);			
 		}
-		else if(rdbtnShowTopNByGenre.isSelected())
+		else if(this.cboQueries.getSelectedIndex() == 10)  //"11) Recommended Top 5 Movies by Genre "
 		{
-			txtTop.setEnabled(true);
-			txtTop.setText("5");
-			txtTitle.setEnabled(false);
-			txtTopDirectors.setEnabled(false);
-			txtTopActors.setEnabled(false);
-			txtAppearances.setEnabled(false);
-			txtGenre.setEnabled(true);
-			txtDirector.setEnabled(false);
-			txtActor.setEnabled(false);
-			txtTag.setEnabled(false);
-			txtUser.setEnabled(false);
+			this.txtTop.setEnabled(true);
+			lblTitle.setText("Genre:");
+			this.txtTitle.setEnabled(true);
+			txtAppearances.setEnabled(true);
 		}
-		else if(rdbtnShowTopNByDirector.isSelected())
+		else if(this.cboQueries.getSelectedIndex() == 11)  //"12) Recommended Top 5 Movies by Director "
 		{
-			txtTop.setEnabled(true);
-			txtTop.setText("5");
-			txtTitle.setEnabled(false);
-			txtTopDirectors.setEnabled(false);
-			txtTopActors.setEnabled(false);
-			txtAppearances.setEnabled(false);
-			txtGenre.setEnabled(false);
-			txtDirector.setEnabled(true);
-			txtActor.setEnabled(false);
-			txtTag.setEnabled(false);
-			txtUser.setEnabled(false);
-		}			
+			this.txtTop.setEnabled(true);
+			lblTitle.setText("Director:");
+			this.txtTitle.setEnabled(true);
+			txtAppearances.setEnabled(true);
+		}		
 	}
 	
 	public void Search(ActionEvent arg0)
 	{
 		String sMessage = "Search by "; 
 		
-		if(rdbtnTopMovies.isSelected())
+		if(this.cboQueries.getSelectedIndex() == 0)  //"1) Top Popular Movies "
 		{
 			sMessage += "Top " + txtTop.getText() + " Movie(s) Selected (Popularity, Rotten Tomato Score)";
 			sMessage += "\n";
 			sMessage += "\n";
 			sMessage += FindTopNMovies(Integer.parseInt(this.txtTop.getText()));
 		}
-		else if(rdbtnBytitle.isSelected())
+		else if(this.cboQueries.getSelectedIndex() == 1)  //"2) Movies by Title "
 		{
 			sMessage += "Title Selected";
 			sMessage += "\n";
 			sMessage += "\n";
 			sMessage += FindMovieByTitle(this.txtTitle.getText());
 		}
-		else if(rdbtnBygenre.isSelected())
+		else if(this.cboQueries.getSelectedIndex() == 2)  //"3) Top Movies by Genre "
 		{
 			sMessage += "Genre Selected";
 			sMessage += "\n";
 			sMessage += "\n";
-			sMessage += FindTopNMoviesByGenre(Integer.parseInt(this.txtTop.getText()), this.txtGenre.getText());
+			sMessage += FindTopNMoviesByGenre(Integer.parseInt(this.txtTop.getText()), this.txtTitle.getText());
 		}
-		else if(rdbtnBydirector.isSelected())
+		else if(this.cboQueries.getSelectedIndex() == 3) //"4) All Movies by Director "
 		{
 			sMessage += "All Movies by Director Selected";
 			sMessage += "\n";
 			sMessage += "\n";
-			sMessage += FindAllMoviesByDirector(this.txtDirector.getText());
+			sMessage += FindAllMoviesByDirector(this.txtTitle.getText());
 		}
-		else if(rdbtnByactor.isSelected())
+		else if(this.cboQueries.getSelectedIndex() == 4)  //"5) All Movies by Actor "
 		{
 			sMessage += "All Movies by Actor Selected";
 			sMessage += "\n";
 			sMessage += "\n";
-			sMessage += FindAllMoviesByActor(this.txtActor.getText());
+			sMessage += FindAllMoviesByActor(this.txtTitle.getText());
 		}
-		else if(rdbtnBytag.isSelected())
+		else if(this.cboQueries.getSelectedIndex() == 5)  //"6) All Movies by Tag "
 		{
 			sMessage += "Tag Selected";
 			sMessage += "\n";
 			sMessage += "\n";
-			sMessage += FindTopAllMoviesByTag(this.txtTag.getText());
+			sMessage += FindTopAllMoviesByTag(this.txtTitle.getText());
 		}
-		else if(rdbtnTopdirectors.isSelected())
+		else if(this.cboQueries.getSelectedIndex() == 6)  //"7) Top Directors "
 		{
-			sMessage += "Top " + txtTopDirectors.getText() + " Directors Selected";
+			sMessage += "Top " + txtTop.getText() + " Directors Selected";
 			sMessage += "\n";
 			sMessage += "\n";
-			sMessage += FindTopNDirectors(Integer.parseInt(this.txtAppearances.getText()));
+			sMessage += FindTopNDirectors(Integer.parseInt(this.txtTitle.getText()), Integer.parseInt(this.txtAppearances.getText()));
 		}
-		else if(rdbtnTopactors.isSelected())
+		else if(this.cboQueries.getSelectedIndex() == 7)  //"8) Top Actors "
 		{
-			sMessage += "Top " + txtTopActors.getText() + " Actors Selected";
+			sMessage += "Top " + txtTop.getText() + " Actors Selected";
 			sMessage += "\n";
 			sMessage += "\n";
-			sMessage += FindTopNActors(Integer.parseInt(this.txtTopActors.getText()), Integer.parseInt(this.txtAppearances.getText()));
+			sMessage += FindTopNActors(Integer.parseInt(this.txtTitle.getText()), Integer.parseInt(this.txtAppearances.getText()));
 		}
-		else if(rdbtnTimelineByUser.isSelected())
+		else if(this.cboQueries.getSelectedIndex() == 8)  //"9) All Movies by User "
 		{
 			sMessage += "Show All Timelines by User";
 			sMessage += "\n";
 			sMessage += "\n";
-			sMessage += FindAllTimelinesByUser(this.txtUser.getText());
+			sMessage += FindAllTimelinesByUser(this.txtTitle.getText());
 		}
-		else if(rdbtnShowAllTagsByUser.isSelected())
+		else if(this.cboQueries.getSelectedIndex() == 9)  //"10) All Tags Associated With Movie "
 		{
 			sMessage += "Show All Tags by User";
 			sMessage += "\n";
 			sMessage += "\n";
-			sMessage += FindAllTagsByUser(this.txtUser.getText());
+			sMessage += FindAllTagsByUser(this.txtTitle.getText());
 		}
-		else if(rdbtnShowTopNByGenre.isSelected())
+		else if(this.cboQueries.getSelectedIndex() == 10)  //"11) Recommended Top 5 Movies by Genre "
 		{
 			sMessage += "Show Recommended Top 5 by Genre";
 			sMessage += "\n";
 			sMessage += "\n";
-			sMessage += FindTop5MoviesByGenre(this.txtGenre.getText());
+			sMessage += FindTop5MoviesByGenre(this.txtTitle.getText());
 		}
-		else if(rdbtnShowTopNByDirector.isSelected())
+		else if(this.cboQueries.getSelectedIndex() == 11)  //"12) Recommended Top 5 Movies by Director "
 		{
 			sMessage += "Show Recommended Top 5 by Director";
 			sMessage += "\n";
 			sMessage += "\n";
-			sMessage += FindTop5MoviesByDirector(this.txtGenre.getText());
+			sMessage += FindTop5MoviesByDirector(this.txtTitle.getText());
 		}
 		
 		this.textArea.setText(sMessage);
-		
+					
 		icounter++;
 	}
 	
@@ -807,7 +580,7 @@ public class AwesomeMovies {
 		return results;
 	}
 
-	private String FindTopNDirectors(int atLeastK) 
+	private String FindTopNDirectors(int n, int atLeastK) 
 	{
 		String results = "";
 		List<PersonRanking> directors = Database.getTopDirectors(atLeastK);
