@@ -26,7 +26,7 @@ CREATE TABLE Tag (
 
 CREATE TABLE Movie_Actor(
 	movieID INT NOT NULL,
-    actorID VARCHAR(32) NOT NULL,
+    actorID VARCHAR(64) NOT NULL,
     ranking SMALLINT,
     PRIMARY KEY(movieID, actorID)
 );
