@@ -1,19 +1,19 @@
 CREATE TABLE Movie (
 	id  INT NOT NULL,
-	title VARCHAR(64),
+	title VARCHAR(128),
 	imdbPictureURL VARCHAR(128),
 	`year` YEAR,
 	rtAudienceRating Decimal(5, 1),
 	rtAudienceNumRatings INT,
 	rtAudienceScore SMALLINT,
 	rtPictureURL VARCHAR(128),
-	directorID VARCHAR(32),
+	directorID VARCHAR(64),
 	country VARCHAR(32),
 	PRIMARY KEY (id)
 );
 
 CREATE TABLE Person (
-	id VARCHAR(32) NOT NULL,
+	id VARCHAR(64) NOT NULL,
 	`name` VARCHAR(64), 
 	PRIMARY KEY (id)
 );
