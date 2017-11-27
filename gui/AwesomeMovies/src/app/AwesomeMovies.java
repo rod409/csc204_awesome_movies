@@ -728,12 +728,15 @@ public class AwesomeMovies {
 	
 	private ImageIcon imageFromURL(String url){
 	    URL img = null;
+	    ImageIcon image = null;
         try {
             img = new URL(url);
         } catch (MalformedURLException e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
-        ImageIcon image = new ImageIcon(img);
+        if(img != null){
+            image = new ImageIcon(img);
+        }
         return image;
 	}
 	
@@ -759,7 +762,8 @@ public class AwesomeMovies {
 	private String FindAllMoviesByDirector(String director)
 	{
 		String results = "";
-		
+		List<Movie> movies = Database.getMoviesByDirector(director);
+        showMovieList(movies);
 		return results;
 	}
 	

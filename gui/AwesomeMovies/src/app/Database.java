@@ -13,8 +13,8 @@ public class Database {
     private static String driverName = "com.mysql.jdbc.Driver";
     private static String databaseUrl = "jdbc:mysql://localhost:3306/awesome_movies?useSSL=false";
     //change to appropriate user and password
-    private static String user = "root";
-    private static String password = "root";
+    private static String user = "user";
+    private static String password = "password1234";
     
     public static void connect(){
         try {
@@ -42,13 +42,39 @@ public class Database {
             stmt = con.prepareStatement(sql);
             stmt.setInt(1, k);
             rs = stmt.executeQuery();
-            while(rs.next()){
-                Movie m = new Movie(rs.getString("title"), rs.getString("imdbPictureURL"), rs.getInt("year"), rs.getInt("rtAudienceScore"), rs.getString("rtPictureURL"), "", "");
-                movies.add(m);
-            }
+            movies = getMoviesFromResultSet(rs);
             stmt.close();
         } catch (SQLException e) {
             e.printStackTrace();
+        }
+        return movies;
+    }
+    
+    public static List<Movie> getMoviesByDirector(String director){
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        String sql = "SELECT title, imdbPictureURL, `year`, rtAudienceScore, rtPictureURL"
+                + " FROM Movie AS M, Person AS P"
+                + " WHERE M.directorId = P.id AND P.name LIKE ?"
+                + " ORDER BY rtAudienceScore DESC;";
+        List<Movie> movies = new ArrayList<Movie>();
+        try {
+            stmt = con.prepareStatement(sql);
+            stmt.setString(1, "%" + director + "%");
+            rs = stmt.executeQuery();
+            movies = getMoviesFromResultSet(rs);
+            stmt.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return movies;
+    }
+    
+    private static List<Movie> getMoviesFromResultSet(ResultSet rs) throws SQLException{
+        List<Movie> movies = new ArrayList<Movie>();
+        while(rs.next()){
+            Movie m = new Movie(rs.getString("title"), rs.getString("imdbPictureURL"), rs.getInt("year"), rs.getInt("rtAudienceScore"), rs.getString("rtPictureURL"), "", "");
+            movies.add(m);
         }
         return movies;
     }
