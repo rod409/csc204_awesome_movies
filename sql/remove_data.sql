@@ -1,0 +1,11 @@
+SET SQL_SAFE_UPDATES = 0;
+DELETE FROM Movie_Location;
+DELETE FROM Movie_Genre;
+DELETE FROM User_Tagged_Movie;
+DELETE FROM User_Rated_Movie;
+DELETE FROM Movie_Tag;
+DELETE FROM Movie_Actor;
+DELETE FROM Tag;
+DELETE FROM Movie;
+DELETE FROM Person;
+SET SQL_SAFE_UPDATES = 1;
