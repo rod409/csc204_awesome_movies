@@ -191,4 +191,51 @@ public class Database {
         }
         return movies;
     }
+    
+    public static List<PersonRanking> getTopDirectors(int minimumMovies){
+        String sql = "SELECT P.name, AVG(M.rtAudienceScore) as Rating"
+                + " FROM Person as P, Movie as M"
+                + " WHERE M.directorID = P.id"
+                + " GROUP BY P.name"
+                + " Having COUNT(*) >= ?"
+                + " ORDER BY Rating DESC LIMIT 10";
+        List<PersonRanking> rankings = getTopPeople(sql, minimumMovies);
+        return rankings;
+    }
+    
+    public static List<PersonRanking> getTopActors(int minimumMovies){
+        String sql = "SELECT P.name, AVG(M.rtAudienceScore) as Rating"
+                + " FROM Person as P, Movie as M, Movie_Actor as MA"
+                + " WHERE M.id = MA.movieID AND P.id = MA.actorID"
+                + " GROUP BY P.name"
+                + " Having COUNT(*) >= ?"
+                + " ORDER BY Rating DESC LIMIT 10";
+        List<PersonRanking> rankings = getTopPeople(sql, minimumMovies);
+        return rankings;
+    }
+    
+    private static List<PersonRanking> getTopPeople(String sql, int minimumMovies){
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        List<PersonRanking> rankings = new ArrayList<PersonRanking>();
+        try {
+            stmt = con.prepareStatement(sql);
+            stmt.setInt(1, minimumMovies);
+            rs = stmt.executeQuery();
+            rankings = getRankingFromResultSet(rs);
+            stmt.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return rankings;
+    }
+    
+    private static List<PersonRanking> getRankingFromResultSet(ResultSet rs) throws SQLException{
+        List<PersonRanking> rankings = new ArrayList<PersonRanking>();
+        while(rs.next()){
+            PersonRanking p = new PersonRanking(rs.getString("name"), rs.getDouble("Rating"));
+            rankings.add(p);
+        }
+        return rankings;
+    }
 }

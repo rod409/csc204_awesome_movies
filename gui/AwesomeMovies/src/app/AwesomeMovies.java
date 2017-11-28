@@ -651,7 +651,7 @@ public class AwesomeMovies {
 			sMessage += "Top " + txtTopDirectors.getText() + " Directors Selected";
 			sMessage += "\n";
 			sMessage += "\n";
-			sMessage += FindTopNDirectors(Integer.parseInt(this.txtTopDirectors.getText()), Integer.parseInt(this.txtAppearances.getText()));
+			sMessage += FindTopNDirectors(Integer.parseInt(this.txtAppearances.getText()));
 		}
 		else if(rdbtnTopactors.isSelected())
 		{
@@ -803,19 +803,33 @@ public class AwesomeMovies {
 		return results;
 	}
 
-	private String FindTopNDirectors(int n, int atLeastK) 
+	private String FindTopNDirectors(int atLeastK) 
 	{
 		String results = "";
-		
+		List<PersonRanking> directors = Database.getTopDirectors(atLeastK);
+		showPersonList(directors);
 		return results;
 	}
 
 	private String FindTopNActors(int n, int atLeastK) 
 	{
 		String results = "";
-		
+		List<PersonRanking> actors = Database.getTopActors(atLeastK);
+        showPersonList(actors);
 		return results;
 	}
+	
+	private void showPersonList(List<PersonRanking> people){
+        contentPanel.removeAll();
+        for(PersonRanking p : people){
+            String directorInfo = "Name: " + p.name + " Rating: " + p.rating;
+            JLabel text = new JLabel(directorInfo);
+            text.setAlignmentX(Component.CENTER_ALIGNMENT);
+            contentPanel.add(text);
+        }
+        contentPanel.validate();
+        contentPanel.repaint();
+    }
 
 	private String FindTop5MoviesByDirector(String director) 
 	{
