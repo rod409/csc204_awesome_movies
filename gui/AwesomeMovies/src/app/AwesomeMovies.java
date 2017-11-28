@@ -712,13 +712,31 @@ public class AwesomeMovies {
             JPanel imageRow = new JPanel(new FlowLayout());
             imageRow.setAlignmentX(Component.CENTER_ALIGNMENT);
             
-            JLabel text = new JLabel(m.title + " Year: " + m.year + " Audience Score: " + m.rtAudienceScore);
+            String movieInfo = m.title + " Year: " + m.year + " Audience Score: " + m.rtAudienceScore;
+            String tagText = "<html>";
+            if(m.getTags().size() > 0){
+                tagText += "Tags: ";
+                int counter = 0;
+                for(String s : m.getTags()){
+                    tagText += "{" + s + "} ";
+                    ++counter;
+                    if(counter == 10){
+                        counter = 0;
+                        tagText += "<br/>";
+                    }
+                }
+            }
+            tagText += "</html>";
+            JLabel text = new JLabel(movieInfo);
+            JLabel tags = new JLabel(tagText, SwingConstants.CENTER);
             text.setAlignmentX(Component.CENTER_ALIGNMENT);
+            tags.setAlignmentX(Component.CENTER_ALIGNMENT);
             ImageIcon imdb = imageFromURL(m.imdbPictureURL);
             ImageIcon rt = imageFromURL(m.rtPictureURL);
             imageRow.add(new JLabel(imdb));
             imageRow.add(new JLabel(rt));
             row.add(text);
+            row.add(tags);
             row.add(imageRow);
             contentPanel.add(row);
         }
@@ -743,7 +761,8 @@ public class AwesomeMovies {
 	private String FindMovieByTitle(String title) 
 	{
 		String results = "";
-		
+		List<Movie> movies = Database.getMoviesByTitle(title);
+        showMovieList(movies);
 		return results;		
 	}
 	
