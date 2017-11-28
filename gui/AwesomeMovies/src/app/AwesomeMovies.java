@@ -774,7 +774,8 @@ public class AwesomeMovies {
 	private String FindTopNMoviesByGenre(int n, String genre)
 	{
 		String results = "";
-		
+		List<Movie> movies = Database.getTopMoviesByGenre(n, genre);
+        showMovieList(movies);
 		return results;
 	}
 

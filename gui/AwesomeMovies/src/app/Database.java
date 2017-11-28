@@ -71,6 +71,27 @@ public class Database {
         return movies;
     }
     
+    public static List<Movie> getTopMoviesByGenre(int k, String genre){
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        String sql = "SELECT M.title, M.imdbPictureURL, M.year, M.rtAudienceScore, M.rtPictureURL"
+                + " FROM Movie AS M, Movie_Genre AS MG"
+                + " WHERE MG.Genre LIKE ? AND MG.movieID = M.id"
+                + " ORDER BY rtAudienceScore DESC LIMIT ?;";
+        List<Movie> movies = new ArrayList<Movie>();
+        try {
+            stmt = con.prepareStatement(sql);
+            stmt.setString(1, "%" + genre + "%");
+            stmt.setInt(2, k);
+            rs = stmt.executeQuery();
+            movies = getMoviesFromResultSet(rs);
+            stmt.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return movies;
+    }
+    
     public static List<Movie> getMoviesByDirector(String director){
         PreparedStatement stmt = null;
         ResultSet rs = null;
