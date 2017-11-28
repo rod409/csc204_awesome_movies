@@ -132,6 +132,26 @@ public class Database {
         return movies;
     }
     
+    public static List<Movie> getMoviesByTag(String tag){
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        String sql = "SELECT M.title, M.imdbPictureURL, M.year, M.rtAudienceScore, M.rtPictureURL"
+                + " FROM Movie as M, Tag as T, Movie_Tag as MT"
+                + " WHERE T.value LIKE ? AND MT.movieID = M.id AND MT.tagID = T.id"
+                + " ORDER BY M.rtAudienceScore DESC;";
+        List<Movie> movies = new ArrayList<Movie>();
+        try {
+            stmt = con.prepareStatement(sql);
+            stmt.setString(1, "%" + tag + "%");
+            rs = stmt.executeQuery();
+            movies = getMoviesFromResultSet(rs);
+            stmt.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return movies;
+    }
+    
     private static List<Movie> getMoviesFromResultSet(ResultSet rs) throws SQLException{
         List<Movie> movies = new ArrayList<Movie>();
         while(rs.next()){

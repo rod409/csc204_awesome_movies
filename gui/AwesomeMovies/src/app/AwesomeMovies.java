@@ -798,7 +798,8 @@ public class AwesomeMovies {
 	private String FindTopAllMoviesByTag(String tag)
 	{
 		String results = "";
-		
+		List<Movie> movies = Database.getMoviesByTag(tag);
+        showMovieList(movies);
 		return results;
 	}
 
