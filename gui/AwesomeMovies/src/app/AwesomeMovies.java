@@ -790,7 +790,8 @@ public class AwesomeMovies {
 	private String FindAllMoviesByActor(String actor)
 	{
 		String results = "";
-		
+		List<Movie> movies = Database.getMoviesByActor(actor);
+        showMovieList(movies);
 		return results;
 	}
 	

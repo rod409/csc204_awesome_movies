@@ -98,11 +98,31 @@ public class Database {
         String sql = "SELECT M.title, M.imdbPictureURL, M.year, M.rtAudienceScore, M.rtPictureURL"
                 + " FROM Movie AS M, Person AS P"
                 + " WHERE M.directorId = P.id AND P.name LIKE ?"
-                + " ORDER BY rtAudienceScore DESC;";
+                + " ORDER BY M.rtAudienceScore DESC;";
         List<Movie> movies = new ArrayList<Movie>();
         try {
             stmt = con.prepareStatement(sql);
             stmt.setString(1, "%" + director + "%");
+            rs = stmt.executeQuery();
+            movies = getMoviesFromResultSet(rs);
+            stmt.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return movies;
+    }
+    
+    public static List<Movie> getMoviesByActor(String actor){
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        String sql = "SELECT M.title, M.imdbPictureURL, M.year, M.rtAudienceScore, M.rtPictureURL"
+                + " FROM Movie AS M, Person AS P, Movie_Actor AS MA"
+                + " WHERE P.name LIKE ? AND P.id = MA.actorID AND M.id = MA.movieID"
+                + " ORDER BY M.rtAudienceScore DESC;";
+        List<Movie> movies = new ArrayList<Movie>();
+        try {
+            stmt = con.prepareStatement(sql);
+            stmt.setString(1, "%" + actor + "%");
             rs = stmt.executeQuery();
             movies = getMoviesFromResultSet(rs);
             stmt.close();
