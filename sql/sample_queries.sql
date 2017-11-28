@@ -5,7 +5,8 @@ LIMIT 10;
 
 SELECT M.id, M.title, M.imdbPictureURL, M.year, M.rtAudienceScore, M.rtPictureURL, T.value
 FROM Movie as M, Tag as T, Movie_Tag as MT
-WHERE M.title LIKE '%Toy%' AND MT.movieID = M.id AND MT.tagID = T.id;
+WHERE M.title LIKE '%Toy%' AND MT.movieID = M.id AND MT.tagID = T.id
+ORDER BY rtAudienceScore DESC;
 
 SELECT M.id, M.title, M.imdbPictureURL, M.year, M.rtAudienceScore, M.rtPictureURL
 FROM Movie as M, Movie_Genre as MG
@@ -19,7 +20,7 @@ WHERE P.name LIKE "%Stone%" AND P.id = M.directorID;
 
 SELECT M.id, M.title, M.imdbPictureURL, M.year, M.rtAudienceScore, M.rtPictureURL
 FROM Movie as M, Person as P, Movie_Actor as MA
-WHERE P.name LIKE "%Smith%" AND P.id = MA.actorID AND M.id = MA.movieID;
+WHERE P.name LIKE "%Will Smith%" AND P.id = MA.actorID AND M.id = MA.movieID;
 
 SELECT M.id, M.title, M.imdbPictureURL, M.year, M.rtAudienceScore, M.rtPictureURL, T.value
 FROM Movie as M, Tag as T, Movie_Tag as MT
@@ -42,7 +43,7 @@ Having COUNT(*) >= 5
 ORDER BY Rating DESC
 LIMIT 10;
 
-SELECT M.title, MG.Genre
+SELECT M.id, M.title, MG.Genre, URM.timestamp, URM.rating
 FROM Movie as M, User_Rated_Movie as URM, Movie_Genre as MG
 WHERE URM.userID = 78 AND URM.movieID = M.id AND M.id = MG.movieID
-GROUP BY Genre;
+ORDER BY URM.timestamp DESC, M.id;

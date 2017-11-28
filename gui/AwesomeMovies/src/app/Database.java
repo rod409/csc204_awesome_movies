@@ -238,4 +238,55 @@ public class Database {
         }
         return rankings;
     }
+    
+    public static List<UserRatedMovie> getUserRatedMovies(int userID){
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        String sql = "SELECT M.id, M.title, MG.Genre, URM.timestamp, URM.rating"
+                + " FROM Movie as M, User_Rated_Movie as URM, Movie_Genre as MG"
+                + " WHERE URM.userID = ? AND URM.movieID = M.id AND M.id = MG.movieID"
+                + " ORDER BY URM.timestamp DESC, M.id";
+        List<UserRatedMovie> ratings = new ArrayList<UserRatedMovie>();
+        try {
+            stmt = con.prepareStatement(sql);
+            stmt.setInt(1, userID);
+            rs = stmt.executeQuery();
+            ratings = getUserRatedMovieFromResultSet(rs);
+            stmt.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return ratings;
+    }
+    
+    private static List<UserRatedMovie> getUserRatedMovieFromResultSet (ResultSet rs) throws SQLException{
+        List<UserRatedMovie> ratings = new ArrayList<UserRatedMovie>();
+        UserRatedMovie urm = null;
+        int previousID = 0;
+        boolean first = true;
+        List<String> genres = Collections.<String>emptyList();
+        while(rs.next()){
+            int currentID = rs.getInt("id");
+            if(first){
+                first = false;
+                previousID = currentID;
+                urm = new UserRatedMovie(rs.getString("title"), rs.getTimestamp("timestamp"), rs.getDouble("rating"));
+                genres = new ArrayList<String>();
+            }
+            if(currentID != previousID){
+                previousID = currentID;
+                urm.setGenres(genres);
+                ratings.add(urm);
+                genres = new ArrayList<String>();
+                urm = new UserRatedMovie(rs.getString("title"), rs.getTimestamp("timestamp"), rs.getDouble("rating"));
+            }
+            genres.add(rs.getString("Genre"));
+        }
+        //add last urm to list
+        if(urm != null){
+            urm.setGenres(genres);
+            ratings.add(urm);
+        }
+        return ratings;
+    }
 }

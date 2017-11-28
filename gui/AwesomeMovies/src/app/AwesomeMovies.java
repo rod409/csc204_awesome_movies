@@ -8,8 +8,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -855,9 +859,43 @@ public class AwesomeMovies {
 	private String FindAllTimelinesByUser(String user)
 	{	
 		String results = "";
-		
+		List<UserRatedMovie> ratings = Database.getUserRatedMovies(Integer.parseInt(user));
+        showUserRatingsList(ratings);
 		return results;		
 	}
+	
+	private void showUserRatingsList(List<UserRatedMovie> ratings){
+        contentPanel.removeAll();
+        Map<String, Integer> genreBreakdown = new HashMap<String, Integer>();
+        int totalRatings = 0;
+        JPanel genres = new JPanel();
+        genres.setLayout(new BoxLayout(genres, BoxLayout.PAGE_AXIS));
+        contentPanel.add(genres);
+        for(UserRatedMovie urm : ratings){
+            for(String s: urm.getGenres()){
+                Integer count = genreBreakdown.get(s);
+                if(count != null){
+                    genreBreakdown.put(s, count+1);
+                } else {
+                    genreBreakdown.put(s, 1);
+                }
+                ++totalRatings;
+            }
+            String ratingInfo = "Movie Title: " + urm.title + " Rating: " + urm.rating + " DateTime: " + urm.timestamp.toString();
+            JLabel text = new JLabel(ratingInfo);
+            text.setAlignmentX(Component.CENTER_ALIGNMENT);
+            contentPanel.add(text);
+        }
+        for(Entry<String, Integer> pair : genreBreakdown.entrySet()){
+            String percent = new DecimalFormat("###.##").format((double)pair.getValue()*100/totalRatings);
+            String genreInfo = "Genre: " + pair.getKey() + " Percent: " + percent;
+            JLabel text = new JLabel(genreInfo);
+            text.setAlignmentX(Component.CENTER_ALIGNMENT);
+            genres.add(text);
+        }
+        contentPanel.validate();
+        contentPanel.repaint();
+    }
 	
 	private String FindAllTagsByUser(String user)
 	{	
