@@ -428,14 +428,14 @@ public class AwesomeMovies {
 			sMessage += "Top " + txtTop.getText() + " Directors Selected";
 			sMessage += "\n";
 			sMessage += "\n";
-			sMessage += FindTopNDirectors(Integer.parseInt(this.txtTitle.getText()), Integer.parseInt(this.txtAppearances.getText()));
+			sMessage += FindTopNDirectors(Integer.parseInt(this.txtTop.getText()), Integer.parseInt(this.txtAppearances.getText()));
 		}
 		else if(this.cboQueries.getSelectedIndex() == 7)  //"8) Top Actors "
 		{
 			sMessage += "Top " + txtTop.getText() + " Actors Selected";
 			sMessage += "\n";
 			sMessage += "\n";
-			sMessage += FindTopNActors(Integer.parseInt(this.txtTitle.getText()), Integer.parseInt(this.txtAppearances.getText()));
+			sMessage += FindTopNActors(Integer.parseInt(this.txtTop.getText()), Integer.parseInt(this.txtAppearances.getText()));
 		}
 		else if(this.cboQueries.getSelectedIndex() == 8)  //"9) All Movies by User "
 		{
@@ -449,7 +449,7 @@ public class AwesomeMovies {
 			sMessage += "Show All Tags by User";
 			sMessage += "\n";
 			sMessage += "\n";
-			sMessage += FindAllTagsByUser(this.txtTitle.getText());
+			sMessage += FindMovieByTitle(this.txtTitle.getText());
 		}
 		else if(this.cboQueries.getSelectedIndex() == 10)  //"11) Recommended Top 5 Movies by Genre "
 		{
@@ -583,7 +583,7 @@ public class AwesomeMovies {
 	private String FindTopNDirectors(int n, int atLeastK) 
 	{
 		String results = "";
-		List<PersonRanking> directors = Database.getTopDirectors(atLeastK);
+		List<PersonRanking> directors = Database.getTopDirectors(n, atLeastK);
 		showPersonList(directors);
 		return results;
 	}
@@ -591,7 +591,7 @@ public class AwesomeMovies {
 	private String FindTopNActors(int n, int atLeastK) 
 	{
 		String results = "";
-		List<PersonRanking> actors = Database.getTopActors(atLeastK);
+		List<PersonRanking> actors = Database.getTopActors(n, atLeastK);
         showPersonList(actors);
 		return results;
 	}
@@ -611,7 +611,8 @@ public class AwesomeMovies {
 	private String FindTop5MoviesByDirector(String director) 
 	{
 		String results = "";
-		
+		List<Movie> movies = Database.getTopNMoviesByDirector(director, 5);
+        showMovieList(movies);
 		return results;
 	}
 

@@ -112,6 +112,27 @@ public class Database {
         return movies;
     }
     
+    public static List<Movie> getTopNMoviesByDirector(String director, int n){
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        String sql = "SELECT M.title, M.imdbPictureURL, M.year, M.rtAudienceScore, M.rtPictureURL"
+                + " FROM Movie AS M, Person AS P"
+                + " WHERE M.directorId = P.id AND P.name LIKE ?"
+                + " ORDER BY M.rtAudienceScore DESC LIMIT ?;";
+        List<Movie> movies = new ArrayList<Movie>();
+        try {
+            stmt = con.prepareStatement(sql);
+            stmt.setString(1, "%" + director + "%");
+            stmt.setInt(2, n);
+            rs = stmt.executeQuery();
+            movies = getMoviesFromResultSet(rs);
+            stmt.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return movies;
+    }
+    
     public static List<Movie> getMoviesByActor(String actor){
         PreparedStatement stmt = null;
         ResultSet rs = null;
@@ -192,35 +213,36 @@ public class Database {
         return movies;
     }
     
-    public static List<PersonRanking> getTopDirectors(int minimumMovies){
+    public static List<PersonRanking> getTopDirectors(int movieLimit, int minimumMovies){
         String sql = "SELECT P.name, AVG(M.rtAudienceScore) as Rating"
                 + " FROM Person as P, Movie as M"
                 + " WHERE M.directorID = P.id"
                 + " GROUP BY P.name"
                 + " Having COUNT(*) >= ?"
-                + " ORDER BY Rating DESC LIMIT 10";
-        List<PersonRanking> rankings = getTopPeople(sql, minimumMovies);
+                + " ORDER BY Rating DESC LIMIT ?";
+        List<PersonRanking> rankings = getTopPeople(sql, minimumMovies, movieLimit);
         return rankings;
     }
     
-    public static List<PersonRanking> getTopActors(int minimumMovies){
+    public static List<PersonRanking> getTopActors(int movieLimit, int minimumMovies){
         String sql = "SELECT P.name, AVG(M.rtAudienceScore) as Rating"
                 + " FROM Person as P, Movie as M, Movie_Actor as MA"
                 + " WHERE M.id = MA.movieID AND P.id = MA.actorID"
                 + " GROUP BY P.name"
                 + " Having COUNT(*) >= ?"
-                + " ORDER BY Rating DESC LIMIT 10";
-        List<PersonRanking> rankings = getTopPeople(sql, minimumMovies);
+                + " ORDER BY Rating DESC LIMIT ?";
+        List<PersonRanking> rankings = getTopPeople(sql, minimumMovies, movieLimit);
         return rankings;
     }
     
-    private static List<PersonRanking> getTopPeople(String sql, int minimumMovies){
+    private static List<PersonRanking> getTopPeople(String sql, int minimumMovies, int movieLimit){
         PreparedStatement stmt = null;
         ResultSet rs = null;
         List<PersonRanking> rankings = new ArrayList<PersonRanking>();
         try {
             stmt = con.prepareStatement(sql);
             stmt.setInt(1, minimumMovies);
+            stmt.setInt(2, movieLimit);
             rs = stmt.executeQuery();
             rankings = getRankingFromResultSet(rs);
             stmt.close();
