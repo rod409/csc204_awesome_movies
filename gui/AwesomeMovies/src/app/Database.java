@@ -13,7 +13,6 @@ public class Database {
     private static Connection con;
     private static String driverName = "com.mysql.jdbc.Driver";
     private static String databaseUrl = "jdbc:mysql://localhost:3306/awesome_movies?useSSL=false";
-    //change to appropriate user and password
     private static String user = "user";
     private static String password = "password1234";
     
@@ -225,12 +224,10 @@ public class Database {
     }
     
     public static List<PersonRanking> getTopActors(int movieLimit, int minimumMovies){
-        String sql = "SELECT P.name, AVG(M.rtAudienceScore) as Rating"
-                + " FROM Person as P, Movie as M, Movie_Actor as MA"
-                + " WHERE M.id = MA.movieID AND P.id = MA.actorID"
-                + " GROUP BY P.name"
-                + " Having COUNT(*) >= ?"
-                + " ORDER BY Rating DESC LIMIT ?";
+        String sql = "SELECT p.name, actsco.Rating"
+                + " FROM actor_score as actsco, Person as P"
+                + " WHERE actsco.Movie_Count >= ? AND actsco.id = P.id"
+                + " LIMIT ?;";
         List<PersonRanking> rankings = getTopPeople(sql, minimumMovies, movieLimit);
         return rankings;
     }

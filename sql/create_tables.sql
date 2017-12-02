@@ -89,3 +89,11 @@ ALTER TABLE Movie_Genre
     
 ALTER TABLE Movie_Location
 	ADD FOREIGN KEY(movieID) REFERENCES Movie(id);
+
+CREATE VIEW Actor_Score AS
+	SELECT MA.actorID AS id, Count(MA.actorID) as Movie_Count, AVG(M.rtAudienceScore) as Rating
+	FROM Movie as M, Movie_Actor as MA
+	WHERE M.id = MA.movieID
+	GROUP BY MA.actorID
+	ORDER BY Rating DESC
+;

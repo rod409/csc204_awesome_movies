@@ -6,6 +6,8 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DecimalFormat;
@@ -144,7 +146,7 @@ public class AwesomeMovies {
 		contentPanel = new JPanel();
         contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.PAGE_AXIS));
 		scrollPane = new JScrollPane(contentPanel, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		scrollPane.setPreferredSize(new Dimension(scrollPane.getPreferredSize().width, scrollPane.getPreferredSize().height));
+		//scrollPane.setPreferredSize(new Dimension(scrollPane.getPreferredSize().width, scrollPane.getPreferredSize().height));
 		textArea = new JTextArea();
 		//scrollPane.setViewportView(textArea);
 		centerPanel.add(scrollPane, BorderLayout.CENTER);
@@ -285,6 +287,14 @@ public class AwesomeMovies {
 		
 		mainPanel.add(bottomPanel, BorderLayout.PAGE_END);
 		//mainPanel.add(btnClose, BorderLayout.SOUTH);
+		frame.addWindowListener(new WindowListener(){
+			@Override public void windowActivated(WindowEvent arg0){}
+			@Override public void windowClosed(WindowEvent arg0){}
+			@Override public void windowClosing(WindowEvent arg0){ Database.close(); }
+			@Override public void windowDeactivated(WindowEvent arg0){}
+			@Override public void windowDeiconified(WindowEvent arg0){}
+			@Override public void windowIconified(WindowEvent arg0){}
+			@Override public void windowOpened(WindowEvent arg0){}});
 		frame.setContentPane(mainPanel);
 		frame.pack();
 		//frame.getContentPane().add(panel, BorderLayout.CENTER);
@@ -517,8 +527,8 @@ public class AwesomeMovies {
             row.add(imageRow);
             contentPanel.add(row);
         }
-        contentPanel.validate();
-        contentPanel.repaint();
+        contentPanel.getParent().getParent().validate();
+        contentPanel.getParent().getParent().repaint();
 	}
 	
 	private ImageIcon imageFromURL(String url){
