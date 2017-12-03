@@ -308,4 +308,73 @@ public class Database {
         }
         return ratings;
     }
+    
+    public static List<Movie> getRecommendationByGenre(List<String> movieTitles){
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        String sql = "SELECT M.title, M.imdbPictureURL, M.year, M.rtAudienceScore, M.rtPictureURL"
+                + " FROM Movie AS M, Movie_Genre AS MG"
+                + " WHERE MG.movieID = M.id AND MG.Genre IN ("
+                + " SELECT MGen.Genre"
+                + " FROM Movie_Genre as MGen, Movie as Mov"
+                + " WHERE MGen.movieID = Mov.id AND (" + likeOrChain("Mov.Title", movieTitles.size()) + "))"
+                + " GROUP BY M.title"
+                + " ORDER BY rtAudienceScore DESC"
+                + " LIMIT 5;";
+            
+        List<Movie> movies = new ArrayList<Movie>();
+        try {
+            stmt = con.prepareStatement(sql);
+            int i = 1;
+            for(String title : movieTitles){
+                stmt.setString(i, "%" + title + "%");
+                ++i;
+            }
+            rs = stmt.executeQuery();
+            movies = getMoviesFromResultSet(rs);
+            stmt.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return movies;
+    }
+    
+    public static List<Movie> getRecommendationByDirector(List<String> movieTitles){
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        String sql = "SELECT M.title, M.imdbPictureURL, M.year, M.rtAudienceScore, M.rtPictureURL"
+                + " FROM Movie AS M"
+                + " WHERE M.directorID IN ("
+                + " SELECT mov.directorID"
+                + " FROM Movie as Mov"
+                + " WHERE " + likeOrChain("Mov.Title", movieTitles.size()) + ")"
+                + " GROUP BY M.title"
+                + " ORDER BY rtAudienceScore DESC"
+                + " LIMIT 5;";
+            
+        List<Movie> movies = new ArrayList<Movie>();
+        try {
+            stmt = con.prepareStatement(sql);
+            int i = 1;
+            for(String title : movieTitles){
+                stmt.setString(i, "%" + title + "%");
+                ++i;
+            }
+            rs = stmt.executeQuery();
+            movies = getMoviesFromResultSet(rs);
+            stmt.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return movies;
+    }
+    
+    private static String likeOrChain(String columnName, int length){
+        String result = "";
+        for(int i = 0; i < length - 1; ++i){
+            result += columnName + " LIKE ? OR ";
+        }
+        result += columnName + " LIKE ?";
+        return result;
+    }
 }

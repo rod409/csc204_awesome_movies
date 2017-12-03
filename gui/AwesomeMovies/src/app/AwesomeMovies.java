@@ -10,6 +10,7 @@ import java.awt.event.WindowListener;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DecimalFormat;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -349,14 +350,14 @@ public class AwesomeMovies {
 		else if(this.cboQueries.getSelectedIndex() == 10)  //"11) Recommended Top 5 Movies by Genre "
 		{
 			this.txtTop.setEnabled(true);
-			lblTitle.setText("Genre:");
+			lblTitle.setText("Movie Titles:");
 			this.txtTitle.setEnabled(true);
 			txtAppearances.setEnabled(true);
 		}
 		else if(this.cboQueries.getSelectedIndex() == 11)  //"12) Recommended Top 5 Movies by Director "
 		{
 			this.txtTop.setEnabled(true);
-			lblTitle.setText("Director:");
+			lblTitle.setText("Movie Titles:");
 			this.txtTitle.setEnabled(true);
 			txtAppearances.setEnabled(true);
 		}		
@@ -483,9 +484,11 @@ public class AwesomeMovies {
         showMovieList(movies);	
 	}
 	
-	private void FindTop5MoviesByGenre(String genre)
-	{		
-		FindTopNMoviesByGenre(5, genre);
+	private void FindTop5MoviesByGenre(String movies)
+	{
+		List<String> movieTitles = Arrays.asList(movies.split("\\s*,\\s*"));
+		List<Movie> movieList = Database.getRecommendationByGenre(movieTitles);
+		showMovieList(movieList);
 	}
 
 	private void FindTopNMoviesByGenre(int n, String genre)
@@ -536,10 +539,11 @@ public class AwesomeMovies {
         contentPanel.repaint();
     }
 
-	private void FindTop5MoviesByDirector(String director) 
+	private void FindTop5MoviesByDirector(String movies) 
 	{
-		List<Movie> movies = Database.getTopNMoviesByDirector(director, 5);
-        showMovieList(movies);
+	    List<String> movieTitles = Arrays.asList(movies.split("\\s*,\\s*"));
+        List<Movie> movieList = Database.getRecommendationByDirector(movieTitles);
+        showMovieList(movieList);
 	}
 	
 	private void FindAllTimelinesByUser(String user)
