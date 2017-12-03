@@ -477,65 +477,51 @@ public class AwesomeMovies {
         return image;
 	}
 	
-	private String FindMovieByTitle(String title) 
+	private void FindMovieByTitle(String title) 
 	{
-		String results = "";
 		List<Movie> movies = Database.getMoviesByTitle(title);
-        showMovieList(movies);
-		return results;		
+        showMovieList(movies);	
 	}
 	
-	private String FindTop5MoviesByGenre(String genre)
+	private void FindTop5MoviesByGenre(String genre)
 	{		
-		return FindTopNMoviesByGenre(5, genre);
+		FindTopNMoviesByGenre(5, genre);
 	}
 
-	private String FindTopNMoviesByGenre(int n, String genre)
+	private void FindTopNMoviesByGenre(int n, String genre)
 	{
-		String results = "";
 		List<Movie> movies = Database.getTopMoviesByGenre(n, genre);
         showMovieList(movies);
-		return results;
 	}
 
-	private String FindAllMoviesByDirector(String director)
+	private void FindAllMoviesByDirector(String director)
 	{
-		String results = "";
 		List<Movie> movies = Database.getMoviesByDirector(director);
         showMovieList(movies);
-		return results;
 	}
 	
-	private String FindAllMoviesByActor(String actor)
+	private void FindAllMoviesByActor(String actor)
 	{
-		String results = "";
 		List<Movie> movies = Database.getMoviesByActor(actor);
         showMovieList(movies);
-		return results;
 	}
 	
-	private String FindTopAllMoviesByTag(String tag)
+	private void FindTopAllMoviesByTag(String tag)
 	{
-		String results = "";
 		List<Movie> movies = Database.getMoviesByTag(tag);
         showMovieList(movies);
-		return results;
 	}
 
-	private String FindTopNDirectors(int n, int atLeastK) 
+	private void FindTopNDirectors(int n, int atLeastK) 
 	{
-		String results = "";
 		List<PersonRanking> directors = Database.getTopDirectors(n, atLeastK);
 		showPersonList(directors);
-		return results;
 	}
 
-	private String FindTopNActors(int n, int atLeastK) 
+	private void FindTopNActors(int n, int atLeastK) 
 	{
-		String results = "";
 		List<PersonRanking> actors = Database.getTopActors(n, atLeastK);
         showPersonList(actors);
-		return results;
 	}
 	
 	private void showPersonList(List<PersonRanking> people){
@@ -550,20 +536,16 @@ public class AwesomeMovies {
         contentPanel.repaint();
     }
 
-	private String FindTop5MoviesByDirector(String director) 
+	private void FindTop5MoviesByDirector(String director) 
 	{
-		String results = "";
 		List<Movie> movies = Database.getTopNMoviesByDirector(director, 5);
         showMovieList(movies);
-		return results;
 	}
 	
-	private String FindAllTimelinesByUser(String user)
+	private void FindAllTimelinesByUser(String user)
 	{	
-		String results = "";
 		List<UserRatedMovie> ratings = Database.getUserRatedMovies(Integer.parseInt(user));
         showUserRatingsList(ratings);
-		return results;		
 	}
 	
 	private void showUserRatingsList(List<UserRatedMovie> ratings){
