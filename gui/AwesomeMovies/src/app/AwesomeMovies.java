@@ -487,9 +487,39 @@ public class AwesomeMovies {
 	private void FindTop5MoviesByGenre(String movies)
 	{
 		List<String> movieTitles = Arrays.asList(movies.split("\\s*,\\s*"));
-		List<Movie> movieList = Database.getRecommendationByGenre(movieTitles);
-		showMovieList(movieList);
+		Map<String, List<Movie>> moviesByGenre = Database.getRecommendationByGenre(movieTitles);
+		showMovieByGenre(moviesByGenre);
 	}
+	
+	private void showMovieByGenre(Map<String, List<Movie>> moviesByGenre){
+        contentPanel.removeAll();
+        for(String genre : moviesByGenre.keySet()){
+            
+            JLabel genreLabel = new JLabel(genre);
+            genreLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
+            contentPanel.add(genreLabel);
+            
+            for(Movie m : moviesByGenre.get(genre)){
+                JPanel row = new JPanel();
+                row.setLayout(new BoxLayout(row, BoxLayout.PAGE_AXIS));
+                JPanel imageRow = new JPanel(new FlowLayout());
+                imageRow.setAlignmentX(Component.CENTER_ALIGNMENT);
+                
+                String movieInfo = m.title + " Year: " + m.year + " Audience Score: " + m.rtAudienceScore;
+                JLabel text = new JLabel(movieInfo);
+                text.setAlignmentX(Component.CENTER_ALIGNMENT);
+                ImageIcon imdb = imageFromURL(m.imdbPictureURL);
+                ImageIcon rt = imageFromURL(m.rtPictureURL);
+                imageRow.add(new JLabel(imdb));
+                imageRow.add(new JLabel(rt));
+                row.add(text);
+                row.add(imageRow);
+                contentPanel.add(row);
+            }
+        }
+        contentPanel.getParent().getParent().validate();
+        contentPanel.getParent().getParent().repaint();
+    }
 
 	private void FindTopNMoviesByGenre(int n, String genre)
 	{

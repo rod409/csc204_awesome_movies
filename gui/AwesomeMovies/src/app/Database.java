@@ -7,7 +7,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Database {
     private static Connection con;
@@ -309,20 +311,14 @@ public class Database {
         return ratings;
     }
     
-    public static List<Movie> getRecommendationByGenre(List<String> movieTitles){
+    public static Map<String, List<Movie>> getRecommendationByGenre(List<String> movieTitles){
         PreparedStatement stmt = null;
         ResultSet rs = null;
-        String sql = "SELECT M.title, M.imdbPictureURL, M.year, M.rtAudienceScore, M.rtPictureURL"
-                + " FROM Movie AS M, Movie_Genre AS MG"
-                + " WHERE MG.movieID = M.id AND MG.Genre IN ("
-                + " SELECT MGen.Genre"
-                + " FROM Movie_Genre as MGen, Movie as Mov"
-                + " WHERE MGen.movieID = Mov.id AND (" + likeOrChain("Mov.Title", movieTitles.size()) + "))"
-                + " GROUP BY M.title"
-                + " ORDER BY rtAudienceScore DESC"
-                + " LIMIT 5;";
-            
-        List<Movie> movies = new ArrayList<Movie>();
+        Map<String, List<Movie>> topMoviesByGenre = new HashMap<String, List<Movie>>();
+        String sql = "SELECT DISTINCT MG.Genre"
+                + " FROM Movie_Genre as MG, Movie as M"
+                + " WHERE MG.movieID = M.id AND (" + likeOrChain("M.title", movieTitles.size()) + ");";
+         
         try {
             stmt = con.prepareStatement(sql);
             int i = 1;
@@ -331,12 +327,38 @@ public class Database {
                 ++i;
             }
             rs = stmt.executeQuery();
-            movies = getMoviesFromResultSet(rs);
+            List<String> genres = new ArrayList<String>();
+            while(rs.next()){
+                topMoviesByGenre.put(rs.getString("Genre"), new ArrayList<Movie>());
+                genres.add(rs.getString("Genre"));
+            }
+            sql = "";
+            String queryByGenre = "(SELECT M.title, M.imdbPictureURL, M.year, M.rtAudienceScore, M.rtPictureURL, MG.Genre"
+                    + " FROM Movie AS M, Movie_Genre AS MG"
+                    + " WHERE MG.Genre LIKE ? AND MG.movieID = M.id"
+                    + " ORDER BY rtAudienceScore DESC LIMIT 5)";
+            for(int k = 0; k < genres.size()-1; ++k){
+                sql += queryByGenre + " UNION ";
+            }
+            if(!genres.isEmpty()){
+                sql += queryByGenre;
+            }
+            stmt = con.prepareStatement(sql);
+            i = 1;
+            for(String genre : genres){
+                stmt.setString(i, "%" + genre + "%");
+                ++i;
+            }
+            rs = stmt.executeQuery();
+            while(rs.next()){
+                Movie m = new Movie(rs.getString("title"), rs.getString("imdbPictureURL"), rs.getInt("year"), rs.getInt("rtAudienceScore"), rs.getString("rtPictureURL"), "", "");
+                topMoviesByGenre.get(rs.getString("Genre")).add(m);
+            }
             stmt.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        return movies;
+        return topMoviesByGenre;
     }
     
     public static List<Movie> getRecommendationByDirector(List<String> movieTitles){
@@ -347,7 +369,7 @@ public class Database {
                 + " WHERE M.directorID IN ("
                 + " SELECT mov.directorID"
                 + " FROM Movie as Mov"
-                + " WHERE " + likeOrChain("Mov.Title", movieTitles.size()) + ")"
+                + " WHERE " + likeOrChain("Mov.title", movieTitles.size()) + ")"
                 + " GROUP BY M.title"
                 + " ORDER BY rtAudienceScore DESC"
                 + " LIMIT 5;";
