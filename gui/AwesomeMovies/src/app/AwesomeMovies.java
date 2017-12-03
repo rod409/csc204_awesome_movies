@@ -3,7 +3,6 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.FlowLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
@@ -11,7 +10,6 @@ import java.awt.event.WindowListener;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.DecimalFormat;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,36 +19,27 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.JScrollPane;
 import javax.swing.BoxLayout;
-import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
 import java.awt.Color;
 import java.awt.Component;
 
-import javax.swing.JRadioButton;
 import javax.swing.SwingConstants;
 import javax.swing.JComboBox;
 
 public class AwesomeMovies {
 
 	private JFrame frame;
-	private JTextArea textArea;
-	private JTextField textField;
 	private JTextField txtTop;
 	private JTextField txtTitle;
 
 	private JLabel lblTitle;
 	private JPanel contentPanel;
 	private JTextField txtAppearances;
-	private JTextField txtTimeLine;
-	
-	private ButtonGroup bgOptions;
-	private int icounter = 0;
-	private JComboBox cboQueries;
+	private JComboBox<String> cboQueries;
 	private JScrollPane scrollPane;
 	/**
 	 * Launch the application.
@@ -89,14 +78,10 @@ public class AwesomeMovies {
 		
 		//Top Panel
 		BorderLayout topLayout = new BorderLayout();
-		//FlowLayout topLayout = new FlowLayout();
-		//topLayout.setHgap(10);
-		//topLayout.setVgap(10);
 
 		JLabel lblAwesomeMovies = new JLabel("");
 		lblAwesomeMovies.setHorizontalAlignment(SwingConstants.CENTER);
 		lblAwesomeMovies.setIcon(new ImageIcon("AwesomeMovies/src/AwesomeMovies.png"));
-		//frame.getContentPane().add(lblHelloWorld, BorderLayout.NORTH);
 
 		JLabel lblLeftCurtain = new JLabel("");
 		lblLeftCurtain.setIcon(new ImageIcon("AwesomeMovies/src/LeftCurtain.png"));
@@ -124,13 +109,10 @@ public class AwesomeMovies {
 		
 		//Middle Panel
 		BorderLayout midLayout = new BorderLayout();
-		//midLayout.setHgap(10);
-		//midLayout.setVgap(10);
 		
 		JPanel midPanel = new JPanel();
 		midPanel.setLayout(midLayout);
 		midPanel.setPreferredSize(new Dimension(700, 500));
-		//midPanel.add(btnClose);
 
 		//************************************************
 		//**  Work Area  *********************************
@@ -146,21 +128,16 @@ public class AwesomeMovies {
 		contentPanel = new JPanel();
         contentPanel.setLayout(new BoxLayout(contentPanel, BoxLayout.PAGE_AXIS));
 		scrollPane = new JScrollPane(contentPanel, ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		//scrollPane.setPreferredSize(new Dimension(scrollPane.getPreferredSize().width, scrollPane.getPreferredSize().height));
-		textArea = new JTextArea();
-		//scrollPane.setViewportView(textArea);
-		centerPanel.add(scrollPane, BorderLayout.CENTER);
-		//centerPanel.add(contentPanel);
 		
-		//GridLayout gRLayout = new GridLayout(2, 5, 0, 0);
+		centerPanel.add(scrollPane, BorderLayout.CENTER);
+		
 		FlowLayout fl_searchPanelTop = new FlowLayout(FlowLayout.LEFT);
 		FlowLayout fl_searchPanelBottom = new FlowLayout();
 				
 		JPanel centerBottomPanel = new JPanel();
 		centerBottomPanel.setBackground(new Color(154, 205, 50));
 		centerBottomPanel.setPreferredSize(new Dimension(100, 60));
-		centerBottomPanel.setLayout(new BorderLayout());		
-		//centerBottomPanel.setLayout(fl_centerBottomPanel);		
+		centerBottomPanel.setLayout(new BorderLayout());			
 		
 		JPanel searchPanelTop = new JPanel();
 		searchPanelTop.setBackground(new Color(154, 205, 50));
@@ -175,7 +152,7 @@ public class AwesomeMovies {
 		bgOptions = new ButtonGroup();
 		*/
 		
-		cboQueries = new JComboBox();
+		cboQueries = new JComboBox<String>();
 		cboQueries.setMaximumRowCount(12);
 		cboQueries.setPrototypeDisplayValue("--------          Select Search Type          --------");
 		cboQueries.addItem("1) Top Popular Movies "); 
@@ -286,7 +263,6 @@ public class AwesomeMovies {
 		bottomPanel.add(btnClose);
 		
 		mainPanel.add(bottomPanel, BorderLayout.PAGE_END);
-		//mainPanel.add(btnClose, BorderLayout.SOUTH);
 		frame.addWindowListener(new WindowListener(){
 			@Override public void windowActivated(WindowEvent arg0){}
 			@Override public void windowClosed(WindowEvent arg0){}
@@ -297,7 +273,6 @@ public class AwesomeMovies {
 			@Override public void windowOpened(WindowEvent arg0){}});
 		frame.setContentPane(mainPanel);
 		frame.pack();
-		//frame.getContentPane().add(panel, BorderLayout.CENTER);
 	}
 	
 	public void DropDownChanged(ActionEvent e)
@@ -389,100 +364,57 @@ public class AwesomeMovies {
 	
 	public void Search(ActionEvent arg0)
 	{
-		String sMessage = "Search by "; 
-		
 		if(this.cboQueries.getSelectedIndex() == 0)  //"1) Top Popular Movies "
 		{
-			sMessage += "Top " + txtTop.getText() + " Movie(s) Selected (Popularity, Rotten Tomato Score)";
-			sMessage += "\n";
-			sMessage += "\n";
-			sMessage += FindTopNMovies(Integer.parseInt(this.txtTop.getText()));
+			FindTopNMovies(Integer.parseInt(this.txtTop.getText()));
 		}
 		else if(this.cboQueries.getSelectedIndex() == 1)  //"2) Movies by Title "
 		{
-			sMessage += "Title Selected";
-			sMessage += "\n";
-			sMessage += "\n";
-			sMessage += FindMovieByTitle(this.txtTitle.getText());
+			FindMovieByTitle(this.txtTitle.getText());
 		}
 		else if(this.cboQueries.getSelectedIndex() == 2)  //"3) Top Movies by Genre "
 		{
-			sMessage += "Genre Selected";
-			sMessage += "\n";
-			sMessage += "\n";
-			sMessage += FindTopNMoviesByGenre(Integer.parseInt(this.txtTop.getText()), this.txtTitle.getText());
+			FindTopNMoviesByGenre(Integer.parseInt(this.txtTop.getText()), this.txtTitle.getText());
 		}
 		else if(this.cboQueries.getSelectedIndex() == 3) //"4) All Movies by Director "
 		{
-			sMessage += "All Movies by Director Selected";
-			sMessage += "\n";
-			sMessage += "\n";
-			sMessage += FindAllMoviesByDirector(this.txtTitle.getText());
+			FindAllMoviesByDirector(this.txtTitle.getText());
 		}
 		else if(this.cboQueries.getSelectedIndex() == 4)  //"5) All Movies by Actor "
 		{
-			sMessage += "All Movies by Actor Selected";
-			sMessage += "\n";
-			sMessage += "\n";
-			sMessage += FindAllMoviesByActor(this.txtTitle.getText());
+			FindAllMoviesByActor(this.txtTitle.getText());
 		}
 		else if(this.cboQueries.getSelectedIndex() == 5)  //"6) All Movies by Tag "
 		{
-			sMessage += "Tag Selected";
-			sMessage += "\n";
-			sMessage += "\n";
-			sMessage += FindTopAllMoviesByTag(this.txtTitle.getText());
+			FindTopAllMoviesByTag(this.txtTitle.getText());
 		}
 		else if(this.cboQueries.getSelectedIndex() == 6)  //"7) Top Directors "
 		{
-			sMessage += "Top " + txtTop.getText() + " Directors Selected";
-			sMessage += "\n";
-			sMessage += "\n";
-			sMessage += FindTopNDirectors(Integer.parseInt(this.txtTop.getText()), Integer.parseInt(this.txtAppearances.getText()));
+			FindTopNDirectors(Integer.parseInt(this.txtTop.getText()), Integer.parseInt(this.txtAppearances.getText()));
 		}
 		else if(this.cboQueries.getSelectedIndex() == 7)  //"8) Top Actors "
 		{
-			sMessage += "Top " + txtTop.getText() + " Actors Selected";
-			sMessage += "\n";
-			sMessage += "\n";
-			sMessage += FindTopNActors(Integer.parseInt(this.txtTop.getText()), Integer.parseInt(this.txtAppearances.getText()));
+			FindTopNActors(Integer.parseInt(this.txtTop.getText()), Integer.parseInt(this.txtAppearances.getText()));
 		}
 		else if(this.cboQueries.getSelectedIndex() == 8)  //"9) All Movies by User "
 		{
-			sMessage += "Show All Timelines by User";
-			sMessage += "\n";
-			sMessage += "\n";
-			sMessage += FindAllTimelinesByUser(this.txtTitle.getText());
+			FindAllTimelinesByUser(this.txtTitle.getText());
 		}
 		else if(this.cboQueries.getSelectedIndex() == 9)  //"10) All Tags Associated With Movie "
 		{
-			sMessage += "Show All Tags by User";
-			sMessage += "\n";
-			sMessage += "\n";
-			sMessage += FindMovieByTitle(this.txtTitle.getText());
+			FindMovieByTitle(this.txtTitle.getText());
 		}
 		else if(this.cboQueries.getSelectedIndex() == 10)  //"11) Recommended Top 5 Movies by Genre "
 		{
-			sMessage += "Show Recommended Top 5 by Genre";
-			sMessage += "\n";
-			sMessage += "\n";
-			sMessage += FindTop5MoviesByGenre(this.txtTitle.getText());
+			FindTop5MoviesByGenre(this.txtTitle.getText());
 		}
 		else if(this.cboQueries.getSelectedIndex() == 11)  //"12) Recommended Top 5 Movies by Director "
 		{
-			sMessage += "Show Recommended Top 5 by Director";
-			sMessage += "\n";
-			sMessage += "\n";
-			sMessage += FindTop5MoviesByDirector(this.txtTitle.getText());
+			FindTop5MoviesByDirector(this.txtTitle.getText());
 		}
-		
-		this.textArea.setText(sMessage);
-					
-		icounter++;
 	}
 	
-	private String FindTopNMovies(int n)
-	{
+	private String FindTopNMovies(int n){
 		String results = "";
 		List<Movie> movies = Database.getTopMovies(n);
 		showMovieList(movies);
@@ -625,20 +557,6 @@ public class AwesomeMovies {
         showMovieList(movies);
 		return results;
 	}
-
-	private String FindTopNMoviesByDirector(int n, String director, int atLeastK) 
-	{
-		String results = "";
-		
-		return results;
-	}
-	
-	private String FindTopNMoviesByActor(int n, String actor, int atLeastK)
-	{
-		String results = "";
-		
-		return results;
-	}
 	
 	private String FindAllTimelinesByUser(String user)
 	{	
@@ -680,12 +598,5 @@ public class AwesomeMovies {
         contentPanel.validate();
         contentPanel.repaint();
     }
-	
-	private String FindAllTagsByUser(String user)
-	{	
-		String results = "";
-		
-		return results;		
-	}
 
 }

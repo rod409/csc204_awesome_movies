@@ -205,7 +205,7 @@ public class Database {
             tags.add(rs.getString("value"));
         }
         //add last movie to list
-        if(movies != null){
+        if(!movies.isEmpty()){
             m.setTags(tags);
             movies.add(m);
         }
