@@ -167,7 +167,8 @@ public class AwesomeMovies {
 		cboQueries.addItem("9) All Movies by User "); 
 		cboQueries.addItem("10) All Tags Associated With Movie "); 
 		cboQueries.addItem("11) Recommended Top 5 Movies by Genre "); 
-		cboQueries.addItem("12) Recommended Top 5 Movies by Director "); 
+		cboQueries.addItem("12) Recommended Top 5 Movies by Director ");
+		cboQueries.addItem("13) Recommended Top 5 Movies by Actor ");
 		searchPanelTop.add(cboQueries);
 
 		ActionListener ComboBoxListener = new ActionListener() {
@@ -360,7 +361,14 @@ public class AwesomeMovies {
 			lblTitle.setText("Movie Titles:");
 			this.txtTitle.setEnabled(true);
 			txtAppearances.setEnabled(true);
-		}		
+		}
+		else if(this.cboQueries.getSelectedIndex() == 12)  //"13) Recommended Top 5 Movies by Actor "
+        {
+            this.txtTop.setEnabled(true);
+            lblTitle.setText("Movie Titles:");
+            this.txtTitle.setEnabled(true);
+            txtAppearances.setEnabled(true);
+        }   
 	}
 	
 	public void Search(ActionEvent arg0)
@@ -413,6 +421,10 @@ public class AwesomeMovies {
 		{
 			FindTop5MoviesByDirector(this.txtTitle.getText());
 		}
+		else if(this.cboQueries.getSelectedIndex() == 12)  //"13) Recommended Top 5 Movies by Actor "
+        {
+            FindTop5MoviesByActor(this.txtTitle.getText());
+        }
 	}
 	
 	private String FindTopNMovies(int n){
@@ -575,6 +587,13 @@ public class AwesomeMovies {
         List<Movie> movieList = Database.getRecommendationByDirector(movieTitles);
         showMovieList(movieList);
 	}
+	
+	private void FindTop5MoviesByActor(String movies) 
+    {
+        List<String> movieTitles = Arrays.asList(movies.split("\\s*,\\s*"));
+        List<Movie> movieList = Database.getRecommendationByActor(movieTitles);
+        showMovieList(movieList);
+    }
 	
 	private void FindAllTimelinesByUser(String user)
 	{	

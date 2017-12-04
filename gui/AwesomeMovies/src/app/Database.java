@@ -391,6 +391,36 @@ public class Database {
         return movies;
     }
     
+    public static List<Movie> getRecommendationByActor(List<String> movieTitles){
+        PreparedStatement stmt = null;
+        ResultSet rs = null;
+        String sql = "SELECT M.title, M.imdbPictureURL, M.year, M.rtAudienceScore, M.rtPictureURL"
+                + " FROM Movie AS M, Movie_Actor as MA"
+                + " WHERE M.id = MA.movieID AND MA.actorID IN ("
+                + " SELECT DISTINCT MAct.actorID"
+                + " FROM Movie as Mov, Movie_Actor as MAct"
+                + " WHERE (MAct.ranking = 1 OR MAct.ranking = 2) AND MAct.movieID = Mov.id AND (" + likeOrChain("Mov.title", movieTitles.size()) + "))"
+                + " GROUP BY M.title"
+                + " ORDER BY rtAudienceScore DESC"
+                + " LIMIT 5;";
+            
+        List<Movie> movies = new ArrayList<Movie>();
+        try {
+            stmt = con.prepareStatement(sql);
+            int i = 1;
+            for(String title : movieTitles){
+                stmt.setString(i, "%" + title + "%");
+                ++i;
+            }
+            rs = stmt.executeQuery();
+            movies = getMoviesFromResultSet(rs);
+            stmt.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return movies;
+    }
+    
     private static String likeOrChain(String columnName, int length){
         String result = "";
         for(int i = 0; i < length - 1; ++i){
